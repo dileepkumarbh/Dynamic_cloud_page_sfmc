@@ -1,0 +1,206 @@
+
+<script runat="server" language="ampscript">
+  
+  var @identity_identifier, @first_name, @rowCount
+ set @identity_identifier = QUERYPARAMETER('identity_identifier')
+ set @first_name = QUERYPARAMETER('first_name')
+ set @rowCount = DataExtensionRowCount("Id_CRM_RRP_RSVP_PEARL_user_data")
+  
+</script>
+
+
+<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#faf7f4">
+  <tr><td align="center" valign="top" style="padding: 20px"><img src="https://image.e.iqos.com/lib/fe3715707564067e7d1777/m/1/b8100473-594d-4614-bb04-86d16a6df96e.gif" width="500" height="auto" style="display: block;" border="0" class="adapt-img"></td></tr>
+  
+  <tr>
+      <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 24px; line-height: 28px; color: #000000; padding: 20px 20px;"><span style="font-family: Arial, sans-serif; font-size: 26px; line-height: 32px; color: #ba279f; padding: 30px 20px 20px; font-weight:bold;"><strong>The Art of Flavor RSVP<br>
+MGP Space, Jakarta</strong></span>
+<br>
+<span style="font-family: Arial, sans-serif; font-size: 26px; line-height: 32px; color: #b54031; padding: 30px 20px 20px; font-weight:bold;"><strong> 27 July 2024 </strong></span>
+ <br><br>
+Open Gate 19:00 WIB
+
+
+  </td></tr>
+<tr>
+<td align="center">
+ <form action="https://cloud.e.iqos.com/popup_congratulations_eng" method="post">
+<table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+  <tr>
+  <td align="center" valign="top">
+    <table width="80%" border="0" cellspacing="0" cellpadding="0" bgcolor="#31c7d3">
+    <tr>
+      <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 18px; line-height: 12px; color: #332f3d; padding: 30px 20px 20px; font-weight:bold;">We kindly request your RSVP by filling out the form below*<br><br><br>
+
+<table width="90%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="border-radius:20px;">
+    <tr>
+      <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 18px; line-height: 20px; color: #000000; padding: 30px 5px 15px;">Name:
+    <label style="font-size:18px; line-height:22px; font-family:Arial, sans-serif;"><input type="text" name="name" id="name" placeholder="Your Name" value="%%=v(@first_name)=%%" required="" style=" padding:5px 10px;">
+        </label>
+      </td></tr>
+        <tr>
+      <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 18px; line-height: 20px; color: #000000; padding: 5px 5px 30px;">Phone:
+    <label style="font-size:18px; line-height:22px; font-family:Arial, sans-serif;"><input type="tel" id="phone" name="phone" pattern="[0-9]{10,13}" placeholder="Enter your phone number" style="padding:5px 10px;" required="">
+      <input type="hidden" id="identity_identifier" name="identity_identifier" value="%%=v(@identity_identifier)=%%">
+        </label>
+      </td></tr></table>
+  </td></tr>
+       <tr>
+         <td align="left" valign="top" style="font-family: Arial, sans-serif; font-size: 12px; line-height: 20px; color: #332f3d; padding: 10px 10px 30px 60px;" class="padL20">
+*I hereby agree to participate in the RSVP event and allow my data to be used, in accordance with the privacy policy in <a href="https://www.pmiprivacy.com/indonesia/en/consumer/" style="color:#000; text-decoration:none;">https://www.pmiprivacy.com/indonesia/en/consumer/</a>
+</td></tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+  <td align="center" style="padding: 30px 0">
+   
+    <input style="background-color:#34303d; color:#ffffff; border-radius:30px; width:350px; height:50px; font-size:22px; font-weight:bold;" type="submit" value="SUBMIT NOW!" class="cta">
+    </td>
+  </tr>
+  </table>
+  </form>
+  
+  </td>
+  </tr>
+   
+</table>
+
+  <!-- second page -->
+  
+  <script runat="server" language="ampscript">
+
+
+    var @identifier, @first_name, @sms_phone_no, @eligible, 
+    set @first_name = RequestParameter("name")
+    set @identifier = RequestParameter("identity_identifier")
+    set @sms_phone_no = RequestParameter("phone")
+    set @submissionDate = Now();
+    set @eligible = "NO"
+    
+ 
+    
+     
+    if EMPTY(@identifier) then
+       set @identifier = QUERYPARAMETER('utm_SFMCsubscId')
+    endif
+    
+
+     SET @URL_ROW = ClaimRow('Id_CRM_RRP_PEARL_VOUCHER', 'IsClaimed', 'identifier', @identifier)
+IF EMPTY(@URL_ROW) THEN
+    Set @voucher = ""
+    set @eligible = "NO"
+
+    set @row_count = RowCount(LookupRows('Id_CRM_RRP_RSVP_PEARL_user_data','identity_identifier',@identifier))
+
+    IF @row_count==0 THEN  
+  InsertDE("Id_CRM_RRP_RSVP_PEARL_user_data","identity_identifier",@identifier, "Name", @first_name, "Phone", @sms_phone_no, "VoucherCode", @voucher, "SubmissionDate", @submissionDate)
+
+
+    ENDIF
+
+
+ELSE
+    Set @voucher = FIELD(@URL_ROW, 'voucher')
+    set @eligible = "YES"
+
+ set @row_count = RowCount(LookupRows('Id_CRM_RRP_RSVP_PEARL_user_data','identity_identifier',@identifier))
+
+    IF @row_count==0 THEN  
+  InsertDE("Id_CRM_RRP_RSVP_PEARL_user_data","identity_identifier",@identifier, "Name", @first_name, "Phone", @sms_phone_no, "VoucherCode", @voucher, "SubmissionDate", @submissionDate)
+
+
+    ENDIF
+
+
+ENDIF
+
+if EMPTY(@identifier) then
+         set @eligible = "NO"
+    endif
+
+
+</script>
+
+  
+%%[IF @eligible == "YES" THEN]%%
+   
+ <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center" valign="top"><table width="80%" border="0" cellspacing="0" cellpadding="0" bgcolor="#31c7d3" style="border-radius: 0px;">
+        <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 34px; line-height: 38px; color: #000000; padding: 40px 0px 0px; font-weight: bold; text-transform:uppercase;">Congratulations! </td>
+        </tr>
+      <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 25px; line-height: 26px; color: #000000; padding: 20px 20px;"><b>Hi %%=v(@first_name)=%%,</b>
+</td>
+        </tr>
+        <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 20px; line-height: 28px; color: #000000; padding: 20px 10px;font-weight: bold;">Your reservation is successful, here is the reservation code: </td>
+        </tr>
+      <tr><td align-="center"><table align="center" width="60%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="border-radius:20px">
+    <tr>
+      <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 36px; line-height: 40px; color: #000000; padding: 25px 20px 25px; font-weight:bold;">%%=RedirectTo(@voucher)=%%
+    
+      </td></tr>
+        </table></td></tr>
+  
+        <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 20px; line-height: 26px; color: #000000; padding: 20px 20px;">Please screenshot this page as proof of reservation <br>which must be shown when entering the event.  </td>
+        </tr>
+       <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 28px; line-height: 32px; color: #000000; padding: 10px 20px 20px; font-weight:bold;">
+            See you there! </td>
+        </tr>
+        <tr>
+          <td align="center" valign="top"><table width="240" align="center" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="center" style="padding:10px 0 30px 0;"><table border="0" cellpadding="0" cellspacing="0" width="240">
+                    
+                  </table><table border="0" cellpadding="0" cellspacing="0" width="240">
+                    <tr>
+                      <td align="center" bgcolor="#34303d" height="50" style="-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 40px; color: #ffffff;" valign="middle" width="240"><a alias="Close" href="https://www.iqos.com/id/en/iluma-neon-purple.html?sag=0" style="color: #ffffff; font-size:18px; font-family:arial, 'helvetica neue', helvetica, sans-serif; text-decoration: none; line-height:40px; text-align: center; ">CLOSE</a></td>
+                    </tr>
+                  </table></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+
+%%[else]%%
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center" valign="top"><table width="70%" border="0" cellspacing="0" cellpadding="0" bgcolor="#31c7d3" style="border-radius: 0px;">
+        <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 34px; line-height: 36px; color: #000000; padding: 30px 20px 10px; font-weight: bold;">Sorry! </td>
+        </tr>
+        <tr>
+          <td align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 18px; line-height: 30px; color: #000000; padding: 20px 20px;font-weight: bold;">Our reservations are fully booked. <br>Thank you for participating. Stay tuned for<br> more exciting events coming your way soon. </td>
+        </tr>
+        <tr>
+          <td align="center" valign="top"><table width="240" align="center" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="center" style="padding:10px 0 30px 0;"><table border="0" cellpadding="0" cellspacing="0" width="240">
+                    <tr>
+                      <td align="center" bgcolor="#34303d" height="50" style="-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 40px; color: #ffffff;" valign="middle" width="240"><a alias="Close" href="https://www.iqos.com/id/en/iluma-neon-purple.html?sag=0" style="color: #ffffff; font-size:18px; font-family:arial, 'helvetica neue', helvetica, sans-serif; text-decoration: none; line-height:40px; text-align: center; ">CLOSE</a></td>
+                    </tr>
+                  </table></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+
+
+
+%%[endif]%%
+
+
+
+
+
+    
